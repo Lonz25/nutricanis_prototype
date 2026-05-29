@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NutriAdvisor — NutriCanis Global</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --nc-green: #3B6D11;
+    --nc-green-light: #EAF3DE;
+    --nc-green-mid: #639922;
+    --nc-green-sel-bg: #d4e8bc;
+    --nc-green-sel-border: #3B6D11;
+    --nc-green-sel-text: #27500A;
+    --nc-amber: #BA7517;
+    --nc-amber-light: #FAEEDA;
+    --nc-teal: #0F6E56;
+    --nc-teal-light: #E1F5EE;
+    --bg: #ffffff;
+    --bg2: #f5f5f3;
+    --bg3: #efefec;
+    --text: #1a1a18;
+    --text2: #5f5e5a;
+    --text3: #888780;
+    --border: rgba(0,0,0,0.12);
+    --border2: rgba(0,0,0,0.22);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1a;
+      --bg2: #252523;
+      --bg3: #2e2e2b;
+      --text: #f0efeb;
+      --text2: #a8a79f;
+      --text3: #6e6d67;
+      --border: rgba(255,255,255,0.12);
+      --border2: rgba(255,255,255,0.22);
+      --nc-green-sel-bg: #1e3a09;
+      --nc-green-sel-border: #639922;
+      --nc-green-sel-text: #97C459;
+      --nc-green-light: #152808;
+      --nc-teal-light: #042e24;
+      --nc-amber-light: #2a1c05;
+    }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg3);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 16px 48px;
+  }
+
+  .app-shell {
+    width: 100%;
+    max-width: 440px;
+    background: var(--bg);
+    border-radius: 24px;
+    overflow: hidden;
+    border: 0.5px solid var(--border);
+  }
+
+  .app-header {
+    background: var(--nc-green);
+    padding: 22px 24px 18px;
+  }
+  .app-logo { font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.65); margin-bottom: 4px; }
+  .app-title { font-size: 22px; font-weight: 600; color: #fff; }
+  .app-subtitle { font-size: 13px; color: rgba(255,255,255,0.75); margin-top: 3px; }
+
+  .step-bar { display: flex; gap: 4px; padding: 14px 24px 0; background: var(--nc-green); }
+  .step-dot { flex: 1; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.22); transition: background 0.3s; }
+  .step-dot.active { background: #fff; }
+  .step-dot.done { background: rgba(255,255,255,0.55); }
+
+  .step-body { padding: 24px; }
+
+  .step-label { font-size: 11px; font-weight: 600; color: var(--nc-green-mid); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 6px; }
+  .step-question { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 20px; line-height: 1.35; }
+
+  .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .choice-btn {
+    border: 1.5px solid var(--border2);
+    border-radius: var(--radius-lg);
+    background: var(--bg);
+    padding: 16px 10px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.18s;
+    display: flex; flex-direction: column; align-items: center; gap: 7px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .choice-btn:active { transform: scale(0.97); }
+  .choice-btn.selected { background: var(--nc-green-sel-bg); border: 2px solid var(--nc-green-sel-border); }
+  .choice-icon { font-size: 28px; }
+  .choice-label { font-size: 14px; font-weight: 500; color: var(--text); }
+  .choice-btn.selected .choice-label { color: var(--nc-green-sel-text); }
+
+  .field-group { margin-bottom: 18px; }
+  .field-label { font-size: 13px; color: var(--text2); margin-bottom: 7px; display: block; }
+
+  input[type=text], select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input[type=text]:focus, select:focus { border-color: var(--nc-green); box-shadow: 0 0 0 3px rgba(59,109,17,0.15); }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+
+  .range-row { display: flex; align-items: center; gap: 12px; }
+  input[type=range] {
+    flex: 1; -webkit-appearance: none; appearance: none;
+    height: 4px; border-radius: 2px; background: var(--bg3); outline: none; cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
+    background: var(--nc-green); border: 2px solid #fff; box-shadow: 0 0 0 1px var(--nc-green);
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--nc-green); border: 2px solid #fff;
+  }
+  .range-val { font-size: 15px; font-weight: 600; min-width: 50px; text-align: right; color: var(--text); }
+
+  .toggle-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .toggle-pill {
+    border: 1.5px solid var(--border2);
+    border-radius: 20px;
+    padding: 7px 15px;
+    font-size: 13px;
+    cursor: pointer;
+    background: var(--bg);
+    color: var(--text2);
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .toggle-pill:active { transform: scale(0.96); }
+  .toggle-pill.selected {
+    background: var(--nc-green-sel-bg);
+    border: 2px solid var(--nc-green-sel-border);
+    color: var(--nc-green-sel-text);
+    font-weight: 600;
+  }
+
+  .nav-row { display: flex; gap: 10px; margin-top: 10px; }
+  .btn-back {
+    flex: 0 0 auto;
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius-md);
+    background: transparent;
+    padding: 11px 16px;
+    font-size: 15px;
+    cursor: pointer;
+    color: var(--text2);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-next {
+    flex: 1;
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--nc-green);
+    color: #fff;
+    padding: 13px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-next:disabled { opacity: 0.38; cursor: default; }
+  .btn-next:not(:disabled):active { opacity: 0.82; }
+
+  .result-header {
+    background: var(--nc-green-light);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .result-icon-wrap {
+    width: 54px; height: 54px; border-radius: 50%; background: var(--nc-green);
+    display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0;
+  }
+  .result-badge {
+    display: inline-block; background: var(--nc-green); color: #EAF3DE;
+    font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+    padding: 3px 9px; border-radius: 10px; margin-bottom: 5px;
+  }
+  .result-product-name { font-size: 17px; font-weight: 600; color: var(--text); line-height: 1.25; }
+  .result-product-sub { font-size: 13px; color: var(--text2); margin-top: 2px; }
+
+  .nutri-bars { margin-bottom: 16px; }
+  .nutri-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+  .nutri-bar-label { font-size: 12px; color: var(--text2); width: 88px; flex-shrink: 0; }
+  .nutri-bar-track { flex: 1; height: 6px; background: var(--bg3); border-radius: 4px; overflow: hidden; }
+  .nutri-bar-fill { height: 100%; border-radius: 4px; background: var(--nc-green); transition: width 0.7s cubic-bezier(.4,0,.2,1); }
+  .nutri-bar-val { font-size: 12px; font-weight: 600; color: var(--text); width: 32px; text-align: right; flex-shrink: 0; }
+
+  .dosage-card {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .dosage-icon { font-size: 24px; }
+  .dosage-text { flex: 1; }
+  .dosage-title { font-size: 14px; font-weight: 500; color: var(--text); }
+  .dosage-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .dosage-amount { font-size: 20px; font-weight: 700; color: var(--nc-green); white-space: nowrap; }
+
+  .price-row {
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 0.5px solid var(--border);
+    padding-top: 14px; margin-bottom: 14px;
+  }
+  .price-info { font-size: 13px; color: var(--text2); line-height: 1.5; }
+  .price-amount { font-size: 24px; font-weight: 700; color: var(--text); }
+  .price-freq { font-size: 12px; color: var(--text2); }
+
+  .tag-row { margin-bottom: 12px; }
+  .reason-tag {
+    display: inline-block; background: var(--nc-teal-light); color: var(--nc-teal);
+    border-radius: 10px; padding: 4px 10px; font-size: 11px; font-weight: 600; margin: 2px 2px 2px 0;
+  }
+  .warn-tag {
+    display: inline-block; background: var(--nc-amber-light); color: var(--nc-amber);
+    border-radius: 10px; padding: 4px 10px; font-size: 11px; font-weight: 600; margin: 2px 2px 2px 0;
+  }
+
+  .altprod-label { font-size: 12px; color: var(--text2); margin-bottom: 8px; }
+  .altprod-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .altprod-pill {
+    border: 0.5px solid var(--border2); border-radius: 20px; padding: 7px 14px;
+    font-size: 12px; background: var(--bg2); color: var(--text2); cursor: pointer;
+  }
+
+  .btn-subscribe {
+    width: 100%; border: none; border-radius: var(--radius-md); background: var(--nc-green);
+    color: #fff; padding: 15px; font-size: 16px; font-weight: 600; cursor: pointer;
+    margin-bottom: 10px; -webkit-tap-highlight-color: transparent;
+  }
+  .btn-subscribe:active { opacity: 0.82; }
+  .btn-vet {
+    width: 100%; border: 0.5px solid var(--border2); border-radius: var(--radius-md);
+    background: transparent; color: var(--text2); padding: 12px; font-size: 14px; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-restart {
+    background: none; border: none; font-size: 12px; color: var(--text3);
+    cursor: pointer; padding: 6px; display: block; margin: 12px auto 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <div class="app-header">
+    <div class="app-logo">NutriCanis Global</div>
+    <div class="app-title">NutriAdvisor</div>
+    <div class="app-subtitle">Nutrition sur mesure pour votre animal</div>
+  </div>
+  <div class="step-bar" id="stepBar">
+    <div class="step-dot active" id="dot0"></div>
+    <div class="step-dot" id="dot1"></div>
+    <div class="step-dot" id="dot2"></div>
+    <div class="step-dot" id="dot3"></div>
+  </div>
+  <div class="step-body" id="stepBody"></div>
+</div>
+
+<script>
+const state = {
+  step: 0, species: null, name: '', breed: '', age: 3, weight: 10,
+  activity: null, sterilized: null, health: []
+};
+
+function updateDots(n) {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById('dot'+i).className =
+      'step-dot' + (i < n ? ' done' : i === n ? ' active' : '');
+  }
+}
+
+function getRec() {
+  const s = state;
+  const senior = s.age > 7, junior = s.age < 1;
+  const obese = (s.species==='dog' && s.weight>30)||(s.species==='cat' && s.weight>6);
+  const athletic = s.activity==='high', sterile = s.sterilized==='yes';
+  let p, tl, ln, pr, fa, fi, hy, price, reasons, warnings, alt;
+
+  if (s.species==='dog') {
+    if (junior) {
+      p='Puppy Boost'; tl='Croquettes croissance haute énergie'; ln='Gamme Puppy';
+      pr=86; fa=72; fi=35; hy=10; price='49,90';
+      reasons=['Croissance active','Calcium renforcé','DHA cerveau'];
+      warnings=['Vérifier la race pour ajuster les portions']; alt=['Puppy Soft (pâtée)','Puppy Sensitive'];
+    } else if (senior) {
+      p='SeniorVital'; tl='Formule articulaire & digestive légère'; ln='Gamme Senior';
+      pr=72; fa=45; fi=62; hy=12; price='54,90';
+      reasons=['Articulations','Poids contrôlé','Digestibilité'];
+      warnings=['Consulter un vétérinaire si pathologie déclarée']; alt=['SeniorVital Pâtée','SeniorJoint+'];
+    } else if (athletic) {
+      p='SportPerform'; tl='Haute densité énergétique pour chiens actifs'; ln='Gamme Sport';
+      pr=95; fa=80; fi=30; hy=10; price='59,90';
+      reasons=['Endurance','Récupération','Oméga-3'];
+      warnings=["Adapter la ration à l'intensité réelle"]; alt=['SportRecover (post-effort)','Sport Gel'];
+    } else if (sterile||obese) {
+      p='EquilibreStérilisé'; tl='Moins de graisses, satiété prolongée'; ln='Gamme Équilibre';
+      pr=78; fa=38; fi=70; hy=11; price='52,90';
+      reasons=['Contrôle du poids','Satiété','Faible en graisses'];
+      warnings=["Surveiller l'IMC tous les 3 mois"]; alt=['Équilibre Light','Équilibre Légumes+'];
+    } else {
+      p='AdulteNaturel'; tl='Formule complète & équilibrée, adulte actif'; ln='Gamme Adulte';
+      pr=82; fa=60; fi=45; hy=10; price='44,90';
+      reasons=['Complet & équilibré','Ingrédients naturels','Bon rapport qualité/prix'];
+      warnings=[]; alt=['AdulteNaturel Poulet','AdulteNaturel Bœuf'];
+    }
+  } else {
+    if (junior) {
+      p='KittenStart'; tl='Croquettes croissance pour chatons'; ln='Gamme Kitten';
+      pr=88; fa=74; fi=28; hy=10; price='42,90';
+      reasons=['Immunité','Croissance osseuse','Appétence élevée'];
+      warnings=['Passer à une formule adulte dès 12 mois']; alt=['Kitten Pâtée','Kitten Sensitive'];
+    } else if (senior) {
+      p='CatSeniorBalance'; tl='Formule rénale & mobilité pour chats âgés'; ln='Gamme Cat Senior';
+      pr=70; fa=42; fi=58; hy=13; price='51,90';
+      reasons=['Santé rénale','Mobilité','Digestion douce'];
+      warnings=['Suivi vétérinaire recommandé dès 10 ans']; alt=['CatSenior Pâtée','CatSenior Indoor'];
+    } else if (sterile||obese) {
+      p='CatStérilisé'; tl='Contrôle pondéral pour chats stérilisés'; ln='Gamme Cat Équilibre';
+      pr=76; fa=36; fi=68; hy=12; price='48,90';
+      reasons=['Poids maîtrisé','Satiété','Urinaire équilibré'];
+      warnings=['Envisager une pâtée complémentaire']; alt=['CatStérilisé Light','CatUrinary Care'];
+    } else {
+      p='CatNaturel'; tl='Recette naturelle pour chats adultes'; ln='Gamme Cat Naturel';
+      pr=84; fa=58; fi=40; hy=11; price='41,90';
+      reasons=['Recette naturelle','Pelage brillant','Digestion saine'];
+      warnings=[]; alt=['CatNaturel Thon','CatNaturel Indoor'];
+    }
+  }
+
+  const dg = s.species==='dog'
+    ? Math.round(s.weight*(athletic?22:senior?15:junior?25:sterile?14:18))
+    : Math.round(s.weight*(athletic?18:senior?14:junior?22:sterile?13:16));
+  const bags = Math.ceil((dg*30)/1800);
+  const total = (parseFloat(price.replace(',','.'))*bags).toFixed(2).replace('.',',');
+  return {p,tl,ln,pr,fa,fi,hy,price,reasons,warnings,alt,dg,bags,total};
+}
+
+function render(n) {
+  updateDots(n);
+  const body = document.getElementById('stepBody');
+
+  if (n===0) {
+    body.innerHTML = `
+      <div class="step-label">Étape 1 sur 4</div>
+      <div class="step-question">Quel type d'animal avez-vous ?</div>
+      <div class="choice-grid">
+        <button class="choice-btn${state.species==='dog'?' selected':''}" onclick="pick('species','dog')">
+          <span class="choice-icon">🐶</span><span class="choice-label">Chien</span>
+        </button>
+        <button class="choice-btn${state.species==='cat'?' selected':''}" onclick="pick('species','cat')">
+          <span class="choice-icon">🐱</span><span class="choice-label">Chat</span>
+        </button>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Prénom de votre animal</label>
+        <input type="text" placeholder="Ex. Luna, Max…" value="${state.name}" oninput="state.name=this.value">
+      </div>
+      <div class="nav-row">
+        <button class="btn-next" onclick="next()" ${!state.species?'disabled':''}>Continuer →</button>
+      </div>`;
+  }
+
+  else if (n===1) {
+    const breeds = state.species==='dog'
+      ? ['Labrador','Golden Retriever','Berger Allemand','Bouledogue','Carlin','Chihuahua','Yorkshire','Border Collie','Autre']
+      : ['Européen','Siamois','Maine Coon','Persan','Ragdoll','Bengal','British Shorthair','Autre'];
+    body.innerHTML = `
+      <div class="step-label">Étape 2 sur 4</div>
+      <div class="step-question">Profil de ${state.name||'votre animal'}</div>
+      <div class="field-group">
+        <label class="field-label">Race</label>
+        <select onchange="state.breed=this.value">
+          <option value="">Sélectionner…</option>
+          ${breeds.map(b=>`<option value="${b}"${state.breed===b?' selected':''}>${b}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Âge — <strong>${state.age<1?'moins de 1 an':state.age+' an'+(state.age>1?'s':'')}</strong></label>
+        <div class="range-row">
+          <input type="range" min="0" max="18" step="1" value="${state.age}" oninput="state.age=+this.value;document.getElementById('av').textContent=this.value<1?'<1a':this.value+'a'">
+          <span class="range-val" id="av">${state.age}a</span>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Poids — <strong>${state.weight} kg</strong></label>
+        <div class="range-row">
+          <input type="range" min="1" max="${state.species==='dog'?60:12}" step="1" value="${state.weight}" oninput="state.weight=+this.value;document.getElementById('wv').textContent=this.value+'kg'">
+          <span class="range-val" id="wv">${state.weight}kg</span>
+        </div>
+      </div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="back()">←</button>
+        <button class="btn-next" onclick="next()">Continuer →</button>
+      </div>`;
+  }
+
+  else if (n===2) {
+    body.innerHTML = `
+      <div class="step-label">Étape 3 sur 4</div>
+      <div class="step-question">Mode de vie de ${state.name||'votre animal'}</div>
+      <div class="field-group">
+        <label class="field-label">Niveau d'activité</label>
+        <div class="toggle-row">
+          ${[['low','Sédentaire'],['medium','Modéré'],['high','Très actif']].map(([v,l])=>
+            `<button class="toggle-pill${state.activity===v?' selected':''}" onclick="pick('activity','${v}')">${l}</button>`
+          ).join('')}
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Stérilisé(e) ?</label>
+        <div class="toggle-row">
+          ${[['yes','Oui'],['no','Non'],['unknown','Je ne sais pas']].map(([v,l])=>
+            `<button class="toggle-pill${state.sterilized===v?' selected':''}" onclick="pick('sterilized','${v}')">${l}</button>`
+          ).join('')}
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Problèmes de santé (optionnel)</label>
+        <div class="toggle-row">
+          ${['Digestif','Articulaire','Urinaire','Allergies','Surpoids','Diabète'].map(h=>
+            `<button class="toggle-pill${state.health.includes(h)?' selected':''}" onclick="toggleH('${h}')">${h}</button>`
+          ).join('')}
+        </div>
+      </div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="back()">←</button>
+        <button class="btn-next" onclick="next()" ${!state.activity||!state.sterilized?'disabled':''}>Voir ma recommandation →</button>
+      </div>`;
+  }
+
+  else if (n===3) {
+    const r = getRec();
+    const icon = state.species==='dog'?'🐶':'🐱';
+    body.innerHTML = `
+      <div class="step-label">Recommandation personnalisée</div>
+      <div class="result-header">
+        <div class="result-icon-wrap">${icon}</div>
+        <div>
+          <div class="result-badge">${r.ln}</div>
+          <div class="result-product-name">${r.p}</div>
+          <div class="result-product-sub">${r.tl}</div>
+        </div>
+      </div>
+      <div class="tag-row">
+        ${r.reasons.map(x=>`<span class="reason-tag">✓ ${x}</span>`).join('')}
+        ${r.warnings.map(x=>`<span class="warn-tag">⚠ ${x}</span>`).join('')}
+      </div>
+      <div class="nutri-bars">
+        ${[['Protéines',r.pr],['Lipides',r.fa],['Fibres',r.fi],['Hydratation',r.hy]].map(([l,v])=>`
+          <div class="nutri-bar-row">
+            <span class="nutri-bar-label">${l}</span>
+            <div class="nutri-bar-track"><div class="nutri-bar-fill" style="width:${v}%"></div></div>
+            <span class="nutri-bar-val">${v}%</span>
+          </div>`).join('')}
+      </div>
+      <div class="dosage-card">
+        <span class="dosage-icon">🥣</span>
+        <div class="dosage-text">
+          <div class="dosage-title">Ration journalière</div>
+          <div class="dosage-sub">${state.weight} kg · ${state.age} an${state.age>1?'s':''} · ${state.activity==='high'?'Très actif':state.activity==='low'?'Sédentaire':'Modéré'}</div>
+        </div>
+        <div class="dosage-amount">${r.dg} g/j</div>
+      </div>
+      <div class="dosage-card">
+        <span class="dosage-icon">📦</span>
+        <div class="dosage-text">
+          <div class="dosage-title">Sac de 1,8 kg</div>
+          <div class="dosage-sub">${r.bags} sac${r.bags>1?'s':''} / mois estimé</div>
+        </div>
+        <div class="dosage-amount">${r.price} €</div>
+      </div>
+      <div class="price-row">
+        <div class="price-info">Budget mensuel estimé<br><small>Abonnement livraison incluse</small></div>
+        <div style="text-align:right">
+          <div class="price-amount">${r.total} €</div>
+          <div class="price-freq">/mois</div>
+        </div>
+      </div>
+      <div class="altprod-label">Vous pourriez aussi aimer :</div>
+      <div class="altprod-row">${r.alt.map(a=>`<button class="altprod-pill">${a}</button>`).join('')}</div>
+      <button class="btn-subscribe">S'abonner & commander</button>
+      <button class="btn-vet">🩺 Partager avec mon vétérinaire</button>
+      <button class="btn-restart" onclick="restart()">← Recommencer pour un autre animal</button>`;
+  }
+}
+
+function pick(k,v) { state[k]=v; render(state.step); }
+function toggleH(v) {
+  const i=state.health.indexOf(v);
+  if(i>=0) state.health.splice(i,1); else state.health.push(v);
+  render(state.step);
+}
+function next() { if(state.step<3){state.step++;render(state.step);} }
+function back() { if(state.step>0){state.step--;render(state.step);} }
+function restart() {
+  Object.assign(state,{step:0,species:null,name:'',breed:'',age:3,weight:10,activity:null,sterilized:null,health:[]});
+  render(0);
+}
+render(0);
+</script>
+</body>
+</html>
